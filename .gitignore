@@ -1,7 +1,6 @@
 # Excluded Dirs #
 #################
 src/ps-data/play/
-src/ps-data/data/
 
 # Compiled source #
 ###################
