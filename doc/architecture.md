@@ -18,17 +18,20 @@
 
 ## Workflows
 Monthly: Update GeoLite2 Database
+
 1. Update geolite2 database
 	* "src/updateGeoIpDB.sh"
 	* GeoLite2 database is updated the first Tuesday for each month
 
 Nightly: Update local perfSONAR Database
+
 1. Pull all perfSONAR records for simple-lookup-service
 2. Load perfSONAR records into Data Store
 3. Lookup geographical coordinates for each perfSONAR host
 	* update host records in Data Store with coordinates
 
 User / On-demand: Find closest perfSONAR nodes
+
 1. Take an input IP address
 2. Search Data Store for nearest N perfSONAR nodes
 3. Search Data Store for meta data for each returned node

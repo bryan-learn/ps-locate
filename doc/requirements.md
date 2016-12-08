@@ -1,9 +1,9 @@
 # Requirements Document for PS-Locate
 
 ## Project Specifics
-Manager: rapier@psc.edu
-Developer: blearn@psc.edu
-Last Updated: 12-8-2016
+Manager: rapier@psc.edu  
+Developer: blearn@psc.edu  
+Last Updated: 12-8-2016  
 
 ## Goals
 Given an IP address, identify the N closest registered perfSONAR nodes along with host-specific meta data.
