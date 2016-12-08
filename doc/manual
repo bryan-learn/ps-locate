@@ -1,0 +1,16 @@
+### Description
+PS-Locate is a tool written in Python that can identify the closest registered perfSONAR nodes for a given IP address. The goal is to make it easier to find nearby perfSONAR nodes to test against. PS-Locate can be used programmatically or through user-interaction.
+
+## Requirements
+(Statements that identify attributes, capabilities, characteristics, or qualities of a system. This is the foundation for what will be or has been implemented.)
+### Purpose
+Identify the N closest registered perfSONAR nodes to a given IP address.
+
+## Architecture
+(Overview of software. Includes relations to an environment and construction principles to be used in design of software components.)
+
+## Technical
+(Documentation of code, algorithms, interfaces, and APIs.)
+
+## End User
+(Manuals for the end-user, system administrators, and support staff.)
