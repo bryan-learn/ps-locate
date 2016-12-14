@@ -34,14 +34,18 @@ def main(argv):
     ## Search Database for IP ##
 
     reader = geoip2.database.Reader(_db) 			# Load database
-    res = reader.city(_ip)					# Query db for _ip
-    coords = [res.location.longitude, res.location.latitude]	# Validate result coords then store
-
-    if(_format == "text"):
-        print coords
-    if(_format == "geojson"):
-        gjson = {"type": "Point", "coordinates": coords}
-        print(json.dumps(gjson))
+    try:
+        res = reader.city(_ip)					# Query db for _ip
+    except:
+        print "No address found for IP Address:", _ip
+    else:
+        coords = [res.location.longitude, res.location.latitude]	# Validate result coords then store
+    
+        if(_format == "text"):
+            print coords
+        if(_format == "geojson"):
+            gjson = {"type": "Point", "coordinates": coords}
+            print(json.dumps(gjson))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
