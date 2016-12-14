@@ -1,6 +1,7 @@
 # Excluded Dirs #
 #################
 src/ps-data/play/
+src/ps-data/data/
 
 # Compiled source #
 ###################
@@ -10,6 +11,7 @@ src/ps-data/play/
 *.exe
 *.o
 *.so
+*.pyc
 
 # Packages #
 ############
