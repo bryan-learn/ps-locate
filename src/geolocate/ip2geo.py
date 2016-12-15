@@ -1,27 +1,28 @@
 #!/usr/bin/python
 
 import sys, getopt
+import logging
 import geoip2.database
 import json
 
-def lookupIP(ip):
-    _db = "GeoLite2-City.mmdb"
-    _ip = ip
-    _format = "geojson" #["text", "geojson"]
+def lookupIP(_ip, _db="GeoLite2-City.mmdb", _format="geojson"):
 
     ## Search Database for IP ##
 
     reader = geoip2.database.Reader(_db)	# Load database
     try:
         res = reader.city(_ip)			# Query db for _ip
+    except (SystemExit, KeyboardInterrupt):
+        raise					# Do not consume these exceptions, but consume any others
     except:
-        return False
+        logging.warning('No match found for lookup on "{0}"'.format(_ip))
+        return False				# Return False if lookup raised any other exception
     else:
         coords = [res.location.longitude, res.location.latitude]	# Validate result coords then store
     
         if(_format == "text"):
-            print coords
+            return coords
         if(_format == "geojson"):
             gjson = {"type": "Point", "coordinates": coords}
-            print(json.dumps(gjson))
+            return gjson
 
