@@ -1,12 +1,14 @@
 '''
 Loads in json records written by 'get-all-records.py' script.
 Inserts host, service, and interface records into MongoDB in seperate collections.
+Creates seperate collection 'corrleated' for quick lookup of values related to a unique host.
 Local MongoDB config:
 - database: staging
-- collections: hosts, services, interfaces
+- collections: hosts, services, interfaces, correlated
 '''
 
 #from memory_profiler import profile
+import logging
 import pymongo
 import json
 
@@ -85,15 +87,19 @@ Example record in correlated collection:
 
 db = dbClient[config['db-name']]
 cursor = db.hosts.aggregate([
-    {"$project": {"host-net-interfaces": 1, "uri": 1}},
-    {"$unwind": "$host-net-interfaces"},
-    {"$lookup": {"from": "interfaces", "localField": "host-net-interfaces", "foreignField": "uri", "as": "ifaces"}},
-    {"$group": {
-        "_id": "$uri",
-        "interfaces": {"$push": "$host-net-interfaces"},
-        "addresses": {"$push": "$ifaces.interface-addresses"}
+    {"$project": {"host-net-interfaces": 1, "uri": 1}},		# only grab key fields from hosts
+    {"$unwind": "$host-net-interfaces"},			# unravel the array 'host-net-interfaces'
+    {"$lookup": {						# left outer join on interfaces
+        "from": "interfaces",
+        "localField": "host-net-interfaces",
+        "foreignField": "uri",
+        "as": "ifaces"
     }},
-    {"$out": "correlated"}
+    {"$group": {						# group by host uri (id). This undoes the unwind step.
+        "_id": "$uri",
+        "interfaces": {"$push": "$host-net-interfaces"},	# include the interface ids
+        "addresses": {"$push": "$ifaces.interface-addresses"}	# include the interface addresses
+    }},
+    {"$out": "correlated"}					# store result in new collection, 'correlated'
 ])
-
 
