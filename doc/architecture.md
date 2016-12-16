@@ -6,18 +6,19 @@
 	* Stores perfSONAR data and coordinate points
 	* Uses geospatial index for quick nearest-neighbor searches on coordinate points
 2. perfSONAR Database Update Agent
-	* Python program: "src/update_ps_store.py"
+	* Python program: "src/update_perfsonar_data.sh"
 	* Interacts with ESnet's Simple-Lookup-Service to pull perfSONAR data
 	* Writes perfSONAR data to Data Store
 3. GeoLite2 Database Update Agent
-	* Python program: "src/update_geoip_store.py"
+	* Python program: "src/update_geo_ip_db.sh"
 	* Downloads the most recent version of the GeoLite2 database from MaxMind
 4. Geo Location Update Agent
-	* Python program: "src/populate_ps_geoip.py"
+	* Python program: "src/geolocate/populate_ps_geoip.py"
 	* Looks up and adds geographical coordinates to all perfSONAR host records
 5. Nearest Neighbor Query Agent
-	* Python program: "src/ps_locate.py"
+	* Python program: "src/geolocate/ps_locate.py"
 	* Interacts with Local perfSONAR Database to find the closest perfSONAR nodes to a given IP
+
 
 ## Workflows
 Update GeoLite2 Database (Monthly)
