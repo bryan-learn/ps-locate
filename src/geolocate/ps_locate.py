@@ -10,19 +10,19 @@ from bson import json_util
 config = {
     'db-url': "mongodb://localhost",
     'db-port': 27017,
-    'db-name': "staging",
+    'db-name': "ps-data",
     'host-count': 3,
     'outfile': None
 }
 
 def main(argv):
     ## Config Log ##
-    logging.basicConfig(filename='log/ps-locate.log', level=logging.DEBUG, format='[%(asctime)s] %(message)s')
+    logging.basicConfig(filename='log/ps_locate.log', level=logging.DEBUG, format='[%(asctime)s] %(message)s')
 
     ## Process CLI Args ##
     _ip = None
 
-    syntaxStr = 'ps-locate.py -i <IP Address> [-u <db url>] [-p <port>] [-d <db name>] [-c <host count>] [-o <output file>]'
+    syntaxStr = 'ps_locate.py -i <IP Address> [-u <db url>] [-p <port>] [-d <db name>] [-c <host count>] [-o <output file>]'
 
     try:
        opts, args = getopt.getopt(argv,"hi:u:p:d:c:o:",["ip=","url=","port=","db=","count=", "outfile="])
