@@ -1,0 +1,25 @@
+# mongo shell example for creating indexes on key fields for ps-data
+
+db.hosts.createIndex({"uri": "text", "host-net-interfaces": "text"})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}
+
+> db.interfaces.createIndex({"uri": "text"})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}
+
+> db.services.createIndex({"service-host": "text"})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}

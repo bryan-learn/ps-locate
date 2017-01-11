@@ -1,0 +1,11 @@
+# ps_locate
+A python tool which returns a list of the geographically closest registered perfSonar nodes.
+
+# Build
+From root project directory run:
+	'python setup.py build'
+
+# Install
+From root project directory run:
+	'pip install .'
+

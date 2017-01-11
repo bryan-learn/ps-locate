@@ -1,7 +1,9 @@
 # Excluded Dirs #
 #################
-src/ps-data/play/
-src/ps-data/data/
+ps_data/play/
+ps_data/data/
+build/
+pslocate.egg-info/
 
 # Compiled source #
 ###################
