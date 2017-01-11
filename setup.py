@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pslocate',
-    version='0.1.5',
+    version='0.1.8',
     url='https://github.com/bryan-learn/ps-locate',
     author='Bryan Learn',
     author_email='blearn@psc.edu',
@@ -10,5 +10,5 @@ setup(
     platforms='any',
     scripts=['ps_locate'],
     packages=find_packages(),
-    data_files = [('', ['geolocate/GeoLite2-City.mmdb'])],
+    data_files = [('', ['geolocate/GeoLite2-City.mmdb']), ('',['log/ps_locate.log'])],
 )

@@ -21,7 +21,7 @@ def main(argv):
     ip2geoPath = os.path.dirname(ip2geo.__file__) + "/"
 
     ## Config Log ##
-    logging.basicConfig(filename='log/ps_locate.log', level=logging.DEBUG, format='[%(asctime)s] %(message)s')
+    logging.basicConfig(filename='ps_locate.log', level=logging.DEBUG, format='[%(asctime)s] %(message)s')
 
     ## Process CLI Args ##
     _ip = None
