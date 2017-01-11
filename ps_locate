@@ -26,7 +26,7 @@ def main(argv):
     ## Process CLI Args ##
     _ip = None
 
-    syntaxStr = 'ps_locate.py -i <IP Address> [-u <db url>] [-p <port>] [-d <db name>] [-c <host count>] [-o <output file>]'
+    syntaxStr = 'ps_locate -i <IP Address> [-u <db url>] [-p <port>] [-d <db name>] [-c <host count>] [-o <output file>]'
 
     try:
        opts, args = getopt.getopt(argv,"hi:u:p:d:c:o:",["ip=","url=","port=","db=","count=", "outfile="])
