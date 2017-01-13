@@ -8,6 +8,11 @@ from sls_client.records import *
 from sls_client.query import *
 from sls_client.find_host_info import *
 
+config = {
+    'db-url': "mongodb://localhost",
+    'db-port': 27017
+}
+
 def main(argv):
     ## Process CLI Args ##
     _ip = None
@@ -33,6 +38,10 @@ def main(argv):
             loadRecordsToMongo()
         elif opt in ("-r", "--rotate"):
             rotateDBs()
+        else:
+            print syntaxStr
+            sys.exit(2)
+
 
 '''
 Queries records from simple-lookup-service and writes seperate record types
@@ -79,16 +88,11 @@ Local MongoDB config:
 - collections: hosts, services, interfaces, correlated
 '''
 def loadRecordsToMongo():
-    config = {
-        'db-url': "mongodb://localhost",
-        'db-port': 27017,
-        'db-name': "staging"
-    }
     
     ## Setup Mongo DB ##
     dbClient = connectToMongodb()			# connect to local mongo db
-    dbClient.drop_database(config['db-name'])	# delete old 'staging' db to clear out old content
-    indexConfig(dbClient[config['db-name']])	# set up indexes for new collections
+    dbClient.drop_database("staging")	# delete old 'staging' db to clear out old content
+    indexConfig(dbClient["staging"])	# set up indexes for new collections
     
     ## Read Records from File - Load into Mongo DB ##
     hostRecords = []
@@ -96,9 +100,9 @@ def loadRecordsToMongo():
     interfaceRecords = []
     
     hostRecords, serviceRecords, interfaceRecords = readAll() 				# read in all record files
-    result = store2Mongo(dbClient[config['db-name']], 'hosts', hostRecords)			# write host records to mongo
-    result = store2Mongo(dbClient[config['db-name']], 'services', serviceRecords)		# write service records to mongo
-    result = store2Mongo(dbClient[config['db-name']], 'interfaces', interfaceRecords)	# write interface records to mongo
+    result = store2Mongo(dbClient["staging"], 'hosts', hostRecords)			# write host records to mongo
+    result = store2Mongo(dbClient["staging"], 'services', serviceRecords)		# write service records to mongo
+    result = store2Mongo(dbClient["staging"], 'interfaces', interfaceRecords)	# write interface records to mongo
     
     ## Add collection (table) of correlated key fields for easier lookups ##
     '''
@@ -110,7 +114,7 @@ def loadRecordsToMongo():
     }
     '''
     
-    db = dbClient[config['db-name']]
+    db = dbClient["staging"]
     cursor = db.hosts.aggregate([
         {"$project": {"host-net-interfaces": 1, "uri": 1}},		# only grab key fields from hosts
         {"$unwind": "$host-net-interfaces"},			# unravel the array 'host-net-interfaces'
@@ -135,10 +139,7 @@ Copies 'staging' to 'ps-data'.
 '''
 
 def rotateDBs():
-    config = {
-        'db-url': "mongodb://localhost",
-        'db-port': 27017
-    }
+
    
     ## Rotate Databases ##
     dbClient = connectToMongodb()           				# connect to local mongo db

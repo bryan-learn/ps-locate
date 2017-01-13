@@ -1,7 +1,7 @@
 # Excluded Dirs #
 #################
-ps_data/play/
-ps_data/data/
+ps_data/play/*
+ps_data/data/*
 build/
 pslocate.egg-info/
 

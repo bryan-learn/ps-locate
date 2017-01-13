@@ -13,23 +13,24 @@ config = {
     'db-port': 27017,
     'db-name': "ps-data",
     'host-count': 3,
-    'outfile': None
+    'outfile': None,
+    'format': "json"	# ["json", "gui"]
 }
 
 def main(argv):
-    ## Enforce working dir is root dir of ps_locate.py ##
+    # Get the root dir of ip2geo module. Hack to ensure correct db path is used
     ip2geoPath = os.path.dirname(ip2geo.__file__) + "/"
 
     ## Config Log ##
-    logging.basicConfig(filename='ps_locate.log', level=logging.DEBUG, format='[%(asctime)s] %(message)s')
+    #logging.basicConfig(filename='ps_locate.log', level=logging.DEBUG, format='[%(asctime)s] %(message)s')
 
     ## Process CLI Args ##
     _ip = None
 
-    syntaxStr = 'ps_locate -i <IP Address> [-u <db url>] [-p <port>] [-d <db name>] [-c <host count>] [-o <output file>]'
+    syntaxStr = 'ps_locate -i <IP Address> [-u <db url>] [-p <port>] [-d <db name>] [-c <host count>] [-o <output file>] [-f <format> ]'
 
     try:
-       opts, args = getopt.getopt(argv,"hi:u:p:d:c:o:",["ip=","url=","port=","db=","count=", "outfile="])
+       opts, args = getopt.getopt(argv,"hi:u:p:d:c:o:f:",["ip=","url=","port=","db=","count=", "outfile=", "format="])
     except getopt.GetoptError:
        print syntaxStr
        sys.exit(2)
@@ -50,6 +51,8 @@ def main(argv):
             config['host-count'] = int(arg)
         elif opt in ("-o", "--outfile"):
             config['outfile'] = arg
+        elif opt in ("-f", "--format"):
+            config['format'] = arg
 
     if(_ip is None):
         print 'Required argument missing: An IP address is required.'
@@ -59,7 +62,8 @@ def main(argv):
     ## Get coordinates of incoming IP ##
     coords = ip2geo.lookupIP(_ip, _dbPath=ip2geoPath, _format="geojson")
     if(not coords):
-        logging.warning("Unable to get coordinates for provided IP '{0}'".format(_ip))
+        #logging.warning("Unable to get coordinates for provided IP '{0}'".format(_ip))
+        print "error: Failed to find coordinates for {0} ".format(_ip)
         sys.exit(2)
 
     ## Query MongoDB for nearest hosts ##
@@ -80,9 +84,10 @@ def main(argv):
             "spherical": "true"
         }},
         {"$group":{"_id": "$_id", "minDist": {"$min": "$distance"}}},	# group by host, storing minimun distance per host
+        {"$sort":{"minDist": 1}},					# sort by minDist
         {"$limit": config['host-count']},				# only return 'host-count' number of hosts
         {"$lookup": {"from": "correlated", "localField":"_id", "foreignField":"_id", "as":"keys"}},	# left outer join on 'correlated' collection to get keys
-        {"$project": {"_id":"$_id", "interfaces": "$keys.interfaces", "addresses":"$keys.addresses"}},	# project fields to get desired format
+        {"$project": {"_id":"$_id", "interfaces": "$keys.interfaces", "addresses":"$keys.addresses", "dist":"$minDist"}},	# project fields to get desired format
         {"$unwind": "$interfaces"},				# these unwinds are needed because we have nested arrays
         {"$unwind": "$addresses"},				# TODO look into how to prevent nesting arrays during data population
         {"$unwind": "$addresses"},
@@ -114,17 +119,52 @@ def main(argv):
             "uri": document['_id']
         })
 
-        # check for errors
+        # build output after error checking
         if(interfaceCursor.alive and serviceCursor.alive and hostCursor.alive):	# TODO find better test than .alive - doesn't always mean cursor.next() will succeed.
-            # build complete host record with all data
-            fullHost = dict(host={}, interfaces=[], services=[])
-            fullHost['host'] = hostCursor.next()		# add host record to fullHost
-            for serv in serviceCursor:				# add service records to fullHost
-                fullHost['services'].append(serv)
-            for iface in interfaceCursor:			# add interface records to fullHost
-                fullHost['interfaces'].append(iface)
-    
-            fullHostRecords.append(fullHost)			# append fullHost record to final list 
+            ## GUI format ##
+            if(config['format'] == "gui"):	# reduced gui format
+                basicHost = dict(host={}, services=[])
+                tmpHost = hostCursor.next()
+                if("host-name" in tmpHost):
+                    basicHost['host']['host-name'] = tmpHost.get('host-name', ["unknown"])	# add host record
+                for serv in serviceCursor:				# add service records
+                    t = dict()
+                    if("service-type" in serv):
+                        t['service-type'] = serv['service-type']
+                    if("service-name" in serv):
+                        t['service-name'] = serv['service-name']
+                    if("bwctl-tools" in serv):
+                        t['bwctl-tools'] = serv['bwctl-tools']
+
+                    basicHost['services'].append(t)
+       
+                fullHostRecords.append(basicHost)			# append basicHost record to final list 
+
+            ## CLI format ##
+            elif(config['format'] == "cli"):	# brief text format for cli
+                basicHost = dict(host={}, services=[])
+                tmpHost = hostCursor.next()
+                if("dist" in document):
+                    basicHost['dist'] = document['dist']
+                if("host-name" in tmpHost):
+                    basicHost['host']['host-name'] = tmpHost.get('host-name', ["unknown"])	# add host record
+                for serv in serviceCursor:				# add service records
+                    t = dict()
+                    if("service-type" in serv):
+                        basicHost['services'].append(serv['service-type'])
+       
+                fullHostRecords.append(basicHost)			# append basicHost record to final list 
+
+            ## JSON format ##
+            else:	# full json format
+                fullHost = dict(host={}, interfaces=[], services=[])
+                fullHost['host'] = hostCursor.next()		# add host record to fullHost
+                for serv in serviceCursor:				# add service records to fullHost
+                    fullHost['services'].append(serv)
+                for iface in interfaceCursor:			# add interface records to fullHost
+                    fullHost['interfaces'].append(iface)
+        
+                fullHostRecords.append(fullHost)			# append fullHost record to final list 
         else:
             print "Query failed. Host: {0}, Services: {1}, Interfaces: {2}".format(interfaceCursor.alive, serviceCursor.alive, hostCursor.alive)
 

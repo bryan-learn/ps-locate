@@ -38,7 +38,7 @@ def main(argv):
 
     ## Search Database for IP ##
     logging.debug("lookup {0} in {1} with format {2}".format(_ip, _db, _format))
-    ip2geo.lookupIP(_ip, _db, _format)
+    print ip2geo.lookupIP(_ip=_ip, _db=_db, _format=_format)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
