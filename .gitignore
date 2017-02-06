@@ -34,6 +34,7 @@ pslocate.egg-info/
 *.sql
 *.sqlite
 *.mmdb
+*.json
 
 # OS generated files #
 ######################
