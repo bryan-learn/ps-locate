@@ -15,3 +15,5 @@ From root project directory run:
 # Run
 Syntax: ps_locate -i <IP Address> [-u <db url>] [-p <port>] [-d <db name>] [-c <host count>] [-o <output file>]
 Example: ps_locate -i "182.128.160.10" -c 1
+
+For more detailed information check the user documentation.
