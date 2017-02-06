@@ -1,8 +1,9 @@
 Basic Usage:
-	ps_locate.py -i <IP Address> [-u <db url>] [-p <port>] [-d <db name>] [-c <host count>] [-o <output file>]
+	ps_locate.py -i <IP Address> [-u <db url>] [-p <port>] [-d <db name>] [-c <host count>] [-o <output file>] [-f <format>]
 
 Examples:
-	1) $python ps_locate.py -i "128.182.1.160"
+
+	1) $ps_locate -i "128.182.1.160"
 		- Most basic usage. Assumes default values if only the IP is provided.
 		Defaults:
 			-u "mongodb://localhost"
@@ -10,7 +11,13 @@ Examples:
 			-d "ps-data"
 			-c 3
 
-	2) $python ps_locate.py -i "128.182.1.160" -c 3 -o "result.json"
+	2) $ps_locate -i "128.182.1.160" -c 3 -o "result.json"
+	
+	3) $ps_locate -i "128.182.1.160" -c 3 -f "text"
+	
+	4) $ps_locate -i "128.182.1.160" -c 3 -f "geojson"
+	
+	4) $ps_locate -i "128.182.1.160" -c 1 -u "mongodb://localhost" -p 27017 -d "ps-data"
 
 Output Description:
 	The output json is an array of custom JSON objects.
@@ -20,7 +27,7 @@ Output Description:
 	    "services": [],	// Array of perfSONAR records
 	    "interfaces": [],	// Array of perfSONAR records
             "host": {}		// Single perfSONAR record
-	}]
+		}]
 
 	Root:
 		An array of objects containing *all* data associated with a perfSONAR host. The length of this array is equal to the host-count (-c option of cli).
