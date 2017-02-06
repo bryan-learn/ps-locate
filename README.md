@@ -1,6 +1,9 @@
 # ps_locate
 A python tool which returns a list of the geographically closest registered perfSonar nodes.
 
+# Dependencies
+- MongoDB 3.2+
+
 # Build
 From root project directory run:
 	'python setup.py build'
