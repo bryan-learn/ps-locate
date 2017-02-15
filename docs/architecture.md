@@ -21,13 +21,13 @@
 
 
 ## Workflows
-Update GeoLite2 Database (Monthly)
-
+Update GeoLite2 Database (Monthly: update_geo_ip_db.sh)
+  
 1. GeoLite2 Database Update Agent
 	* Agent is executed manually or by scheduled job to update the database
 	* MaxMind updates the GeoLite2 database on the first Tuesday of each month
 
-Update local perfSONAR Database (Nightly)
+Update local perfSONAR Database (Nightly: update_perfsonar_data.sh)
 
 1. perfSONAR Database Update Agent
 	* Pull all perfSONAR records from simple-lookup-service
@@ -40,7 +40,7 @@ Update local perfSONAR Database (Nightly)
 	* Copy 'ps-data' Data Store to 'old-ps-data' Data Store
 	* Copy 'staging' Data Store to 'ps-data' Data Store
 
-Find closest perfSONAR nodes (User - On Demand)
+Find closest perfSONAR nodes (User/On Demand: ps_locate)
 
 1. Nearest Neighbor Query Agent
 	* Take an input IP address
