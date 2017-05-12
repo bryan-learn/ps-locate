@@ -17,3 +17,6 @@ Syntax: ps_locate -i <IP Address> [-u <db url>] [-p <port>] [-d <db name>] [-c <
 Example: ps_locate -i "182.128.160.10" -c 1
 
 For more detailed information check the user documentation.
+
+This product includes GeoLite2 data created by MaxMind, available from
+<a href="http://www.maxmind.com">http://www.maxmind.com</a>.
