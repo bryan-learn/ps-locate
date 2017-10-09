@@ -4,12 +4,24 @@
 echo "[$(date)] Begin perfSONAR DB update.."
 
 cd ./ps_data
-# download perfSONAR records
+# download perfSONAR records [attempt 3 times]
 if python ./ps_data.py --download; then
 	echo "    [$(date)] download: Success"
 else
-	echo "    [$(date)] download: Failed"
-	exit 1
+	echo "    [$(date)] download: Failed (try 1)"
+	sleep 30
+	if python ./ps_data.py --download; then
+		echo "    [$(date)] download: Success"
+	else
+		echo "    [$(date)] download: Failed (try 2)"
+		sleep 30
+		if python ./ps_data.py --download; then
+			echo "    [$(date)] download: Success"
+		else
+			echo "    [$(date)] download: Failed (try 3)"
+			exit 1
+		fi
+	fi
 fi
 
 # store perfSONAR records into local mongodb instance for 'staging'
