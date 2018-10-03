@@ -90,7 +90,7 @@ Local MongoDB config:
 def loadRecordsToMongo():
     
     ## Setup Mongo DB ##
-    dbClient = connectToMongodb()			# connect to local mongo db
+    dbClient = connectToMongodb()	# connect to local mongo db
     dbClient.drop_database("staging")	# delete old 'staging' db to clear out old content
     indexConfig(dbClient["staging"])	# set up indexes for new collections
     
@@ -100,6 +100,20 @@ def loadRecordsToMongo():
     interfaceRecords = []
     
     hostRecords, serviceRecords, interfaceRecords = readAll() 				# read in all record files
+    # Check that records are non-empty
+    if (not hostRecords) and (not serviceRecords) and (not interfaceRecords): # No records at all
+        print("\nError: No records returned from sls_client.")
+        print("\nCheck if there are any active hosts: \nhttp://ps-west.es.net:8096/lookup/activehosts.json\n")
+        sys.exit(1)
+    if not hostRecords:
+        print("\nError: No host records returned from sls_client.")
+        sys.exit(1)
+    if not serviceRecords:
+        print("\nError: No service records returned from sls_client.")
+        sys.exit(1)
+    if not interfaceRecords:
+        print("\nError: No interface records returned from sls_client.")
+        sys.exit(1)
     result = store2Mongo(dbClient["staging"], 'hosts', hostRecords)			# write host records to mongo
     result = store2Mongo(dbClient["staging"], 'services', serviceRecords)		# write service records to mongo
     result = store2Mongo(dbClient["staging"], 'interfaces', interfaceRecords)	# write interface records to mongo
